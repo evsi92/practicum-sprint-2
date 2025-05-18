@@ -1,7 +1,6 @@
 package com.example.proxy;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.SpringApplication;
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
@@ -42,15 +41,11 @@ public class Config {
                                 System.out.println("value = " + value);
                                 return value < percent;
                             })
-                            .uri(moviesHost + "/api/movies");
+                            .uri(moviesHost);
                 })
                 .route(p -> p
-                        .path("/api/movies")
-                        .uri(monolithHost + "/api/movies")
-                )
-                .route(p -> p
-                        .path("/api/users")
-                        .uri(monolithHost + "/api/users")
+                        .path("/**")
+                        .uri(monolithHost)
                 )
                 .build();
     }
