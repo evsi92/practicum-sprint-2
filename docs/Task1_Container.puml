@@ -52,10 +52,10 @@ Rel(apiGateway, recommendationService, "Routes requests about recommendations")
 
 Rel(recommendationService, externalRecommendationService, "Handles messages from external recommendation service")
 
-Rel(usersService, messageBroker, "Sends messages about Entities Cinema System")
-Rel(subscriptionsService, messageBroker, "Sends messages about Entities Cinema System")
-Rel(usersService, paymentsService, "Sends messages about Entities Cinema System")
-Rel(usersService, moviesService, "Sends messages about Entities Cinema System")
-Rel(usersService, recommendationService, "Sends messages about Entities Cinema System")
+Rel(usersService, messageBroker, "Sends messages")
+Rel(subscriptionsService, messageBroker, "Sends messages")
+Rel(paymentsService, messageBroker, "Sends messages")
+Rel(moviesService, messageBroker, "Sends messages")
+Rel(recommendationService, messageBroker, "Sends messages")
 
 @enduml
