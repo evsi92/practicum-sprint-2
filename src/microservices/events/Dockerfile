@@ -1,31 +1,22 @@
-FROM golang:1.23-alpine AS builder
-
+FROM maven:3.9.6-eclipse-temurin-21-alpine AS builder
 WORKDIR /app
 
-# Copy go mod and sum files
-COPY go.mod ./
+# Copy project files & build
+COPY pom.xml .
+RUN mvn dependency:go-offline -B
 
-# Download all dependencies
-RUN go mod download
+COPY src ./src
+RUN mvn clean package
 
-# Copy the source code
-COPY . .
 
-# Build the application
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o events-service .
+FROM openjdk:21-jdk-slim
+WORKDIR /app
 
-# Use a smaller image for the final application
-FROM alpine:latest  
+# Copy built JAR from previous stage
+COPY --from=builder /app/target/*.jar app.jar
 
-RUN apk --no-cache add ca-certificates
-
-WORKDIR /root/
-
-# Copy the binary from builder
-COPY --from=builder /app/events-service .
-
-# Expose the application port
+# Expose application port
 EXPOSE 8082
 
-# Command to run the executable
-CMD ["./events-service"]
+# Start Spring Boot application
+CMD ["java", "-jar", "app.jar"]

@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class HealthController {
 
     @GetMapping
-    public ResponseEntity<String> getCurrentTemperatureInLocation() {
+    public ResponseEntity<String> health() {
         return ResponseEntity.ok("OK");
     }
 }
