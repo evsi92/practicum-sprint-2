@@ -1,0 +1,61 @@
+@startuml
+title Cinema Container Diagram
+
+top to bottom direction
+
+!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Component.puml
+
+Person(user, "User", "User of the Cinema")
+Person(admin, "Admin", "Admin of the Cinema")
+
+Container(messageBroker, "Message Broker", "Kafka", "Exchanges messages between Cinema Systems")
+
+System(ui, "UI", "Provides Clients and Admins access to Cinema Systems")
+System(apiGateway, "API Gateway", "Routs Requests")
+
+System_Ext(externalAuthApi, "Authentication API", "Provides SSO Authentication")
+System_Ext(externalRecommendationService, "Recommendation Service", "Provides User's Recommendations")
+System_Ext(externalPaymentsService, "Payments Service", "Provides Payments Methods")
+
+Rel(user, ui, "Uses the system")
+Rel(admin, ui, "Manages the Cinema environment")
+Rel(ui, apiGateway, "Sends User's and Admin's Requests to router")
+
+Container_Boundary(accountManagementContext, "Account Management Context") {
+  Container(usersService, "Manages users profiles", "Go", "Handles user requests")
+  Container(subscriptionsService, "Manages users subscriptions", "Go", "Handles user requests about subscriptions")
+  Container(paymentsService, "Manages users payments", "Go", "Handles user requests about payments")
+  Container(accountsDomainDatabase, "Database", "PostgreSQL", "Stores user data, subscriptions and payments")
+}
+
+Rel(usersService, accountsDomainDatabase, "Read / Write Data")
+Rel(subscriptionsService, accountsDomainDatabase, "Read / Write Data")
+Rel(paymentsService, accountsDomainDatabase, "Read / Write Data")
+
+Rel(apiGateway, usersService, "Routes requests about users")
+Rel(apiGateway, subscriptionsService, "Routes requests about subscriptions")
+Rel(apiGateway, paymentsService, "Routes requests about payments")
+Rel(apiGateway, externalAuthApi, "Routes login requests")
+Rel(paymentsService, externalPaymentsService, "Manages Payments Methods")
+
+Container_Boundary(moviesContext, "Movies Management Context") {
+  Container(moviesService, "Manages movies", "Go", "Handles movies requests")
+  Container(recommendationService, "Manages recommendations from external service", "Go", "Handles messages from external service")
+  Container(moviesDomainDatabase, "Database", "PostgreSQL", "Stores movies and recommended movies")
+}
+
+Rel(moviesService, moviesDomainDatabase, "Read / Write Data")
+Rel(recommendationService, moviesDomainDatabase, "Read / Write Data")
+
+Rel(apiGateway, moviesService, "Routes requests about movies")
+Rel(apiGateway, recommendationService, "Routes requests about recommendations")
+
+Rel(recommendationService, externalRecommendationService, "Handles messages from external recommendation service")
+
+Rel(usersService, messageBroker, "Sends messages")
+Rel(subscriptionsService, messageBroker, "Sends messages")
+Rel(paymentsService, messageBroker, "Sends messages")
+Rel(moviesService, messageBroker, "Sends messages")
+Rel(recommendationService, messageBroker, "Sends messages")
+
+@enduml
