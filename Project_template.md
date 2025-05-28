@@ -345,9 +345,11 @@ kafka.common.InconsistentClusterIdException: The Cluster ID OkOjGPrdRimp8nkFohYk
 kubectl get pods -n cinemaabyss
 minikube tunnel
 ```
+![img.png](docs/img_3.png)
 
 Потом вызовите 
 https://cinemaabyss.example.com/api/movies
+![img.png](docs/img_4.png)
 
 
 ## Удаляем все
